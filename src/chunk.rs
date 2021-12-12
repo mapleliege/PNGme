@@ -16,7 +16,7 @@ impl Chunk {
     pub const CHUNK_TYPE_BYTES: usize = 4;
     pub const CRC_BYTES: usize = 4;
 
-    pub const METADATA_BYTES: usize =
+    pub const MINIUMUM_LENGTH: usize =
         Chunk::DATA_LENGTH_BYTES + Chunk::CHUNK_TYPE_BYTES + Chunk::CRC_BYTES;
 
     pub fn length(&self) -> usize {
@@ -41,6 +41,13 @@ impl Chunk {
         &self.message_bytes.as_slice()
     }
 
+    /*
+        Returns a vector containing:
+        - The length of the message as bytes (4 bytes)
+        - The ChunkType of the chunk (4 bytes)
+        - The message bytes
+        - The CRC of the Chunk (4 bytes)
+    */
     pub fn as_bytes(&self) -> Vec<u8> {
         let data_length = self.message_bytes.len() as u32;
         data_length
@@ -53,6 +60,9 @@ impl Chunk {
             .collect()
     }
 
+    /*
+        Converts message bytes of Chunk to a valid utf-8 String
+    */
     pub fn data_as_string(&self) -> Result<String> {
         let data_string = std::str::from_utf8(&self.message_bytes)?;
         Ok(data_string.to_string())
@@ -64,7 +74,8 @@ impl TryFrom<&[u8]> for Chunk {
     type Error = Error;
 
     fn try_from(bytes: &[u8]) -> Result<Self> {
-        if bytes.len() < Chunk::METADATA_BYTES {
+        // chunk bytes must be 12 bytes long at a minimum
+        if bytes.len() < Chunk::MINIUMUM_LENGTH {
             return Err(Box::from(ChunkError::InputTooSmall))
         }
         // first 4 bytes is the length of the chunk
