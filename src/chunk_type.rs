@@ -6,7 +6,7 @@ use std::fmt::Display;
 // Implementation for Chapter 1 of PNGme
 
 #[derive(Eq, PartialEq, Debug)]
-struct ChunkType {
+pub struct ChunkType {
     bytes: [u8; 4]
 }
 
@@ -78,13 +78,13 @@ impl Display for ChunkType {
     }
 }
 
-/// Chunk type errors
+// Chunk type errors
 #[derive(Debug)]
 pub enum ChunkTypeError {
-    /// Chunk has incorrect number of bytes (4 expected)
+    // Chunk has incorrect number of bytes (4 expected)
     ByteLengthError(usize),
 
-    /// The input string contains an invalid character at the given index
+    // The input string contains an invalid character at the given index
     InvalidCharacter,
 }
 
