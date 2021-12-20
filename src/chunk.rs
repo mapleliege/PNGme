@@ -6,6 +6,7 @@ use std::{
 };
 use crate::chunk_type::ChunkType;
 
+#[derive(Debug)]
 pub struct Chunk {
     chunk_type: ChunkType,
     message_bytes: Vec<u8>,
@@ -18,6 +19,10 @@ impl Chunk {
 
     pub const MINIUMUM_LENGTH: usize =
         Chunk::DATA_LENGTH_BYTES + Chunk::CHUNK_TYPE_BYTES + Chunk::CRC_BYTES;
+
+    pub fn new(chunk_type: ChunkType, message_bytes: Vec<u8>) -> Self {
+        Self { chunk_type, message_bytes }
+    }
 
     pub fn length(&self) -> usize {
         self.message_bytes.len()
